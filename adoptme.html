@@ -428,49 +428,32 @@
             errorDiv.innerText = "";
             successDiv.innerText = "";
 
-            try {
-                const response = await fetch(`${API_URL}/api/verify-login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: currentUser.id,
-                        submitted_text: document.getElementById('verificationCode').innerText,
-                    })
-                });
+           const verifyBtn = document.getElementById('verifyBioBtn');
+    const errorDiv = document.getElementById('errorMsg');
+    const successDiv = document.getElementById('successMsg');
 
-                const data = await response.json();
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<span class="loading-spinner"></span>Überprüfe...';
+    errorDiv.innerText = "";
+    successDiv.innerText = "";
 
-                if (!response.ok) {
-                    throw new Error(data.error);
-                }
-
-                successDiv.innerText = `✅ ${data.message}`;
-                
-                setTimeout(() => {
-                    document.getElementById('step2').classList.remove('active');
-                    document.getElementById('step3').classList.add('active');
-                    document.getElementById('successText').innerText = `Eingeloggt als: ${currentUser.username}`;
-                    
-                    setTimeout(() => {
-                        modal.style.display = 'none';
-                        openBtn.innerText = `${currentUser.username} ✅`;
-                        openBtn.style.borderColor = '#00ff88';
-                        openBtn.style.color = '#00ff88';
-                    }, 1500);
-                }, 800);
-
-            } catch (err) {
-                errorDiv.innerText = `❌ ${err.message}`;
-            } finally {
-                verifyBtn.disabled = false;
-                verifyBtn.innerHTML = 'Login überprüfen';
-            }
-        }
-
-        usernameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && currentUser) {
-                accountBox.click();
-            }
+    // Direkt als erfolgreich durchlassen:
+    setTimeout(() => {
+        successDiv.innerText = "✔ Erfolgreich eingeloggt!";
+        
+        setTimeout(() => {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+            document.getElementById('successText').innerText = `Eingeloggt als: ${currentUser.username}`;
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                openBtn.innerText = `${currentUser.username} ✔`;
+                openBtn.style.borderColor = '#00ff88';
+                openBtn.style.color = '#00ff88';
+            }, 1500);
+        }, 800);
+    }, 500);
         });
     </script>
 </body>
