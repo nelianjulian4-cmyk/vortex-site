@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORTEX.GG — Adopt Me Arena</title>
+    <style>
+        :root {
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #030107;
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            padding: 0 50px;
+            background: rgba(5, 1, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #00d2ff, #ff1461, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-wallet {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #ffd700;
+        }
+
+        .login-btn-small {
+            background: transparent;
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            color: #00d2ff;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn-small:hover {
+            background: rgba(0, 210, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 80px);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #ffffff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 1, 7, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-card {
+            background: rgba(15, 10, 25, 0.95);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            padding: 40px;
+            border-radius: 24px;
+            width: 440px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .modal-card h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .modal-card input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 15px 0 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .modal-card input:focus {
+            border-color: #00d2ff;
+        }
+
+        .account-selector-box {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 210, 255, 0.06);
+            border: 1px solid rgba(0, 210, 255, 0.35);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .account-selector-box:hover {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: #00d2ff;
+            transform: scale(1.01);
+        }
+
+        .avatar-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #00d2ff;
+            background: #111;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .verification-code-box {
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px dashed #00d2ff;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: #00d2ff;
+            margin: 15px 0;
+            word-break: break-all;
+            user-select: all;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background: #00d2ff;
+            color: #030107;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            background: #00b4d8;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-msg {
+            color: #ff1461;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .success-msg {
+            color: #00ff88;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 210, 255, 0.3);
+            border-top: 2px solid #00d2ff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand-logo">VORTEX.GG ⚡</div>
+        <div class="nav-right">
+            <div class="nav-wallet">Balance: <span id="nav-balance">1050</span> 🪙</div>
+            <button class="login-btn-small" id="openLoginBtn">Login</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Adopt Me Arena</h1>
+        <p>Logge dich mit deinem Roblox-Account ein, um fortzufahren.</p>
+    </div>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-card">
+            <button class="close-modal" id="closeLoginBtn">✕</button>
+            
+            <div class="step-content active" id="step1">
+                <h3>Roblox Login</h3>
+                <p style="font-size: 0.9rem;">Gib deinen Roblox-Namen ein:</p>
+                
+                <input type="text" id="robloxUsername" placeholder="Benutzername eingeben..." autocomplete="off">
+                
+                <div class="account-selector-box" id="accountSelectorBox">
+                    <img id="previewAvatarImg" src="" class="avatar-img" alt="Avatar">
+                    <div>
+                        <div id="previewDisplayName" style="font-weight: bold; font-size: 0.95rem; color: #fff;">Name</div>
+                        <div style="font-size: 0.75rem; color: #00d2ff;">Hierklicken zum Auswählen 👇</div>
+                    </div>
+                </div>
+
+                <div class="error-msg" id="errorMsgStep1"></div>
+            </div>
+
+            <div class="step-content" id="step2">
+                <h3>Account bestätigen</h3>
+                
+                <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 10px; margin-bottom: 12px; text-align: left;">
+                    <img id="selectedAvatarImg" src="" class="avatar-img" style="width: 35px; height: 35px;" alt="Avatar">
+                    <div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Ausgewählter Account:</div>
+                        <div id="selectedDisplayName" style="font-weight: bold; font-size: 0.9rem; color: #fff;">Username</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.85rem;">Füge diesen Code in dein Roblox-Profil (<strong style="color: #00d2ff;">Info</strong>) ein:</p>
+                <div class="verification-code-box" id="verificationCode">VORTEX-XXXX-XXXX</div>
+                
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Nachdem du den Code eingefügt hast, klicke unten auf "Login überprüfen"</p>
+                
+                <button class="action-btn" id="verifyBioBtn" onclick="verifyLogin()">Login überprüfen</button>
+                <div class="error-msg" id="errorMsg"></div>
+                <div class="success-msg" id="successMsg"></div>
+            </div>
+
+            <div class="step-content" id="step3">
+                <h3 style="color: #00d2ff;">✅ Erfolgreich eingeloggt!</h3>
+                <p style="font-size: 0.9rem;" id="successText">Willkommen zurück!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://asset-manager--nelianjulian4.replit.app';
+        let currentUser = null;
+        let currentChallenge = null;
+
+        const modal = document.getElementById('loginModal');
+        const openBtn = document.getElementById('openLoginBtn');
+        const closeBtn = document.getElementById('closeLoginBtn');
+        const usernameInput = document.getElementById('robloxUsername');
+        const accountBox = document.getElementById('accountSelectorBox');
+        const verifyBioBtn = document.getElementById('verifyBioBtn');
+
+        function closeModal() {
+            modal.style.display = 'none';
+            usernameInput.value = "";
+            accountBox.style.display = 'none';
+            document.getElementById('errorMsgStep1').innerText = "";
+            document.getElementById('errorMsg').innerText = "";
+            document.getElementById('successMsg').innerText = "";
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.remove('active');
+            currentUser = null;
+            currentChallenge = null;
+        }
+
+        openBtn.addEventListener('click', () => { modal.style.display = 'flex'; usernameInput.focus(); });
+        closeBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => { if (e.target === modal) { closeModal(); } });
+
+        let searchTimeout;
+        usernameInput.addEventListener('input', async () => {
+            clearTimeout(searchTimeout);
+            const username = usernameInput.value.trim();
+            const errorDiv = document.getElementById('errorMsgStep1');
+
+            if (username.length < 2) {
+                accountBox.style.display = 'none';
+                return;
+            }
+
+            errorDiv.innerText = "";
+            
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/lookup-user`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        accountBox.style.display = 'none';
+                        errorDiv.innerText = `❌ ${data.error}`;
+                        return;
+                    }
+
+                    currentUser = data.user;
+                    currentChallenge = data.challenge;
+
+                    document.getElementById('previewAvatarImg').src = data.user.avatar;
+                    document.getElementById('previewDisplayName').innerText = `@${data.user.username}`;
+                    document.getElementById('selectedAvatarImg').src = data.user.avatar;
+                    document.getElementById('selectedDisplayName').innerText = `@${data.user.username}`;
+                    document.getElementById('verificationCode').innerText = data.challenge;
+
+                    accountBox.style.display = 'flex';
+                    errorDiv.innerText = "";
+
+                } catch (err) {
+                    errorDiv.innerText = `❌ Fehler: ${err.message}`;
+                    accountBox.style.display = 'none';
+                }
+            }, 500);
+        });
+
+        accountBox.addEventListener('click', () => {
+            if (!currentUser) return;
+            
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('errorMsg').innerText = "";
+        });
+
+        async function verifyLogin() {
+            if (!currentUser || !currentChallenge) {
+                document.getElementById('errorMsg').innerText = "❌ Fehler: Benutzer nicht gefunden";
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verifyBioBtn');
+            const errorDiv = document.getElementById('errorMsg');
+            const successDiv = document.getElementById('successMsg');
+
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<span class="loading-spinner"></span>Überprüfe...';
+            errorDiv.innerText = "";
+            successDiv.innerText = "";
+
+            try {
+                const response = await fetch(`${API_URL}/api/verify-login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        submitted_text: currentChallenge
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                successDiv.innerText = `✅ ${data.message}`;
+                
+                setTimeout(() => {
+                    document.getElementById('step2').classList.remove('active');
+                    document.getElementById('step3').classList.add('active');
+                    document.getElementById('successText').innerText = `Eingeloggt als: ${currentUser.username}`;
+                    
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        openBtn.innerText = `${currentUser.username} ✅`;
+                        openBtn.style.borderColor = '#00ff88';
+                        openBtn.style.color = '#00ff88';
+                    }, 1500);
+                }, 800);
+
+            } catch (err) {
+                errorDiv.innerText = `❌ ${err.message}`;
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = 'Login überprüfen';
+            }
+        }
+
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && currentUser) {
+                accountBox.click();
+            }
+        });
+    </script>
+</body>
+</html>
