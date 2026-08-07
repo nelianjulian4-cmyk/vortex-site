@@ -434,7 +434,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: currentUser.id,
-                        submitted_text: currentChallenge
+                        submitted_text: document.getElementById('verificationCode').innerText,
                     })
                 });
 
